@@ -15,7 +15,7 @@ kotlin {
 
     android {
         namespace = "dev.markturnip.radioplayer"
-        compileSdk = 34
+        compileSdk = 37
         minSdk = 24
 
         compilerOptions {
