@@ -39,10 +39,8 @@ class MediaPlayerService : MediaSessionService() {
         mediaSession
 
     override fun onTaskRemoved(rootIntent: Intent?) {
-        val player = mediaSession?.player
-        if (player == null || !player.playWhenReady || player.mediaItemCount == 0) {
-            stopSelf()
-        }
+        mediaSession?.player?.stop()
+        stopSelf()
     }
 
     override fun onDestroy() {
