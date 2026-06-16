@@ -40,6 +40,7 @@ class MediaPlayerService : MediaSessionService() {
 
     override fun onTaskRemoved(rootIntent: Intent?) {
         mediaSession?.player?.stop()
+        stopForeground(STOP_FOREGROUND_REMOVE)
         stopSelf()
     }
 
