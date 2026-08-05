@@ -1,4 +1,4 @@
-package dev.markturnip.radioplayer
+package dev.markturnip.streamplayer
 
 import kotlinx.cinterop.ExperimentalForeignApi
 import platform.Foundation.NSURL

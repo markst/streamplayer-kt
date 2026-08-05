@@ -1,4 +1,4 @@
-public enum RadioPlayerPlaybackState {
+public enum StreamPlayerPlaybackState {
     // case urlNotSet
     case buffering
     case readyToPlay

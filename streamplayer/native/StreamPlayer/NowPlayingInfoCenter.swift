@@ -23,14 +23,14 @@ public class NowPlayingInfoCenter {
     // MARK: - Init
     
     public init(
-        radioPlayer: RadioPlayerType,
+        streamPlayer: StreamPlayerType,
         publisher: AnyPublisher<NowPlayingInfo?, Never>
     ) {
         Publishers
             .CombineLatest4(
-                radioPlayer.state,
-                radioPlayer.playbackState,
-                radioPlayer.playProgress
+                streamPlayer.state,
+                streamPlayer.playbackState,
+                streamPlayer.playProgress
                     .throttle(for: .seconds(5), scheduler: DispatchQueue.main, latest: true),
                 publisher
             )
@@ -43,7 +43,7 @@ public class NowPlayingInfoCenter {
             }
             .store(in: &cancellables)
         
-        radioPlayer.state
+        streamPlayer.state
             .map { state -> MPNowPlayingPlaybackState in
                 switch state {
                 case .paused:
@@ -62,7 +62,7 @@ public class NowPlayingInfoCenter {
             .store(in: &cancellables)
     }
     
-    func updateNowPlaying(info: NowPlayingInfo?, state: RadioPlayerState, progress: Progress) {
+    func updateNowPlaying(info: NowPlayingInfo?, state: StreamPlayerState, progress: Progress) {
         debugPrint(#function, info as Any, state, progress)
         guard let info else {
             MPNowPlayingInfoCenter.default().nowPlayingInfo = nil
@@ -72,8 +72,7 @@ public class NowPlayingInfoCenter {
         var nowPlayingInfo = [String: Any]()
         let duration = (progress.duration.isNaN || progress.duration <= 0) == false ? progress.duration : info.duration
         nowPlayingInfo[MPNowPlayingInfoPropertyIsLiveStream] = duration == nil
-        // TODO: Use `player.currentTime().seconds` rather?
-        nowPlayingInfo[MPNowPlayingInfoPropertyElapsedPlaybackTime] = progress.progress  /// updating this property frequently is not required (or recommended.)
+        nowPlayingInfo[MPNowPlayingInfoPropertyElapsedPlaybackTime] = progress.progress
         nowPlayingInfo[MPNowPlayingInfoPropertyMediaType] = NSNumber(value: MPNowPlayingInfoMediaType.audio.rawValue)
 
         nowPlayingInfo[MPMediaItemPropertyPlaybackDuration] = duration

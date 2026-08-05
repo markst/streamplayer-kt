@@ -3,6 +3,8 @@
 import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.XCFramework
 
+group = "dev.markturnip"
+
 plugins {
     alias(libs.plugins.kotlinMultiplatform)
     alias(libs.plugins.androidKmpLibrary)
@@ -10,12 +12,15 @@ plugins {
 
 kotlin {
     compilerOptions {
-        freeCompilerArgs.add("-Xskip-metadata-version-check")
+        freeCompilerArgs.addAll(
+            "-Xskip-metadata-version-check",
+            "-Xexpect-actual-classes"
+        )
     }
 
     android {
-        namespace = "dev.markturnip.radioplayer"
-        compileSdk = 37
+        namespace = "dev.markturnip.streamplayer"
+        compileSdk = 36
         minSdk = 24
 
         compilerOptions {
@@ -29,7 +34,7 @@ kotlin {
         iosSimulatorArm64()
     ).forEach {
         it.binaries.framework {
-            baseName = "radioplayer"
+            baseName = "streamplayer"
             xcf.add(this)
             // Dynamic framework required for SwiftPM import integration
             isStatic = false
@@ -40,7 +45,7 @@ kotlin {
         iosMinimumDeploymentTarget.set("14.0")
         localSwiftPackage(
             directory = layout.projectDirectory.dir("native"),
-            products = listOf("RadioPlayer")
+            products = listOf("StreamPlayer")
         )
     }
 

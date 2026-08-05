@@ -1,9 +1,9 @@
-package dev.markturnip.radioplayer
-import swiftPMImport.dev.markturnip.radioplayer.MediaPlayController
-import swiftPMImport.dev.markturnip.radioplayer.RadioPlayerStateBuffering
-import swiftPMImport.dev.markturnip.radioplayer.RadioPlayerStatePaused
-import swiftPMImport.dev.markturnip.radioplayer.RadioPlayerStatePlaying
-import swiftPMImport.dev.markturnip.radioplayer.RadioPlayerStateStopped
+package dev.markturnip.streamplayer
+import swiftPMImport.dev.markturnip.streamplayer.MediaPlayController
+import swiftPMImport.dev.markturnip.streamplayer.StreamPlayerStateBuffering
+import swiftPMImport.dev.markturnip.streamplayer.StreamPlayerStatePaused
+import swiftPMImport.dev.markturnip.streamplayer.StreamPlayerStatePlaying
+import swiftPMImport.dev.markturnip.streamplayer.StreamPlayerStateStopped
 import kotlinx.cinterop.ExperimentalForeignApi
 
 @OptIn(ExperimentalForeignApi::class)
@@ -15,10 +15,10 @@ actual class PlatformMediaPlayer actual constructor() : MediaPlayController() {
     actual fun subscribeState(callback: (PlaybackState) -> Unit) {
         subscribeStateWithCallback { state ->
             when (state) {
-                RadioPlayerStatePaused -> callback(PlaybackState.PAUSED)
-                RadioPlayerStatePlaying -> callback(PlaybackState.PLAYING)
-                RadioPlayerStateStopped -> callback(PlaybackState.STOPPED)
-                RadioPlayerStateBuffering -> callback(PlaybackState.BUFFERING)
+                StreamPlayerStatePaused -> callback(PlaybackState.PAUSED)
+                StreamPlayerStatePlaying -> callback(PlaybackState.PLAYING)
+                StreamPlayerStateStopped -> callback(PlaybackState.STOPPED)
+                StreamPlayerStateBuffering -> callback(PlaybackState.BUFFERING)
                 else -> {
                     callback(PlaybackState.STOPPED)
                 }

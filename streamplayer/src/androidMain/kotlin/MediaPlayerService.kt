@@ -1,4 +1,4 @@
-package dev.markturnip.radioplayer
+package dev.markturnip.streamplayer
 
 import android.content.Intent
 import androidx.media3.session.MediaSession
@@ -15,7 +15,7 @@ import androidx.media3.session.MediaSessionService
  * <uses-permission android:name="android.permission.FOREGROUND_SERVICE_MEDIA_PLAYBACK" />
  *
  * <service
- *     android:name="dev.markturnip.radioplayer.MediaPlayerService"
+ *     android:name="dev.markturnip.streamplayer.MediaPlayerService"
  *     android:exported="true"
  *     android:foregroundServiceType="mediaPlayback">
  *     <intent-filter>
