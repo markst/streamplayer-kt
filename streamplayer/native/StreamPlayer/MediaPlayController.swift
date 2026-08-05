@@ -2,7 +2,7 @@ import AVFoundation
 import SwiftUI
 import Combine
 
-@objc public class MediaPlayController: NSObject, RadioPlayerType {
+@objc public class MediaPlayController: NSObject, StreamPlayerType {
     internal var player: AVQueuePlayer
     internal var cancellables: Set<AnyCancellable> = []
     internal var remoteCommandCenter: RemoteCommandCenter?
@@ -17,10 +17,10 @@ import Combine
 
         super.init()
         self.remoteCommandCenter = .init(
-            radioPlayer: self
+            streamPlayer: self
         )
         self.nowPlayingInfoCenter = .init(
-            radioPlayer: self,
+            streamPlayer: self,
             publisher: $nowPlayingInfo.eraseToAnyPublisher()
         )
 
@@ -45,6 +45,10 @@ import Combine
         
     }
 
+    // Narrow read-only accessor so platform video views can bind AVPlayerLayer
+    // without exposing the mutable AVQueuePlayer internals.
+    @objc public var avPlayer: AVPlayer { player }
+
     private var audioSession: AVAudioSession {
         AVAudioSession.sharedInstance()
     }
@@ -66,7 +70,7 @@ import Combine
         }
     }
 
-    // MARK: - RadioPlayerType
+    // MARK: - StreamPlayerType
 
     public lazy var isPlaying: AnyPublisher<Bool, Never> = {
         player.publisher(for: \.rate)
@@ -82,7 +86,7 @@ import Combine
             .eraseToAnyPublisher()
     }()
 
-    public lazy var state: AnyPublisher<RadioPlayerState, Never> = {
+    public lazy var state: AnyPublisher<StreamPlayerState, Never> = {
         player.publisher(for: \.timeControlStatus)
             .map { status in
                 switch status {
@@ -90,7 +94,7 @@ import Combine
                     return .paused
                 case .waitingToPlayAtSpecifiedRate:
                     return .buffering
-                case .playing: // check rate?
+                case .playing:
                     return .playing
                 @unknown default:
                     return .stopped
@@ -100,7 +104,7 @@ import Combine
             .eraseToAnyPublisher()
     }()
 
-    public lazy var playbackState: AnyPublisher<RadioPlayerPlaybackState, Never> = {
+    public lazy var playbackState: AnyPublisher<StreamPlayerPlaybackState, Never> = {
         player.publisher(for: \.status)
             .map { status in
                 switch status {
@@ -129,7 +133,6 @@ import Combine
                             .periodicTimePublisher()
                             .prepend(.zero),
                         item.publisher(for: \.duration)
-                            .print("duration") // TODO: Skip if live? initial duration is indefinite
                             .filter { $0.isValidCMTime }
                             .compactMap { $0 }
                     )
@@ -150,7 +153,7 @@ import Combine
         player.publisher(for: \.currentItem)
             .compactMap { $0?.publisher(for: \.error) }
             .switchToLatest()
-            .compactMap { $0 } // playerItem?.errorLog()?.events.first?.errorStatusCode
+            .compactMap { $0 }
             .eraseToAnyPublisher()
     }()
 
@@ -253,7 +256,7 @@ import Combine
             .store(in: &cancellables)
     }
 
-    @objc public func subscribeState(callback: @escaping (RadioPlayerState) -> Void) {
+    @objc public func subscribeState(callback: @escaping (StreamPlayerState) -> Void) {
         state
             .sink(receiveValue: callback)
             .store(in: &cancellables)
@@ -269,7 +272,6 @@ import Combine
 extension MediaPlayController {
     func setupNotifications() {
         let notificationCenter = NotificationCenter.default
-        // TODO: Replace with `publisher(for: AVAudioSession.x)`
         notificationCenter.addObserver(self,
                                        selector: #selector(handleInterruption),
                                        name: AVAudioSession.interruptionNotification,
@@ -311,7 +313,6 @@ extension MediaPlayController {
         case .oldDeviceUnavailable:
             if let previousRoute = userInfo[AVAudioSessionRouteChangePreviousRouteKey] as? AVAudioSessionRouteDescription {
                 for output in previousRoute.outputs where output.portType == .headphones {
-                    // TODO: Check headphone state?
                     pause()
                     break
                 }

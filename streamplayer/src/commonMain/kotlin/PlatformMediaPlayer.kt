@@ -1,4 +1,4 @@
-package dev.markturnip.radioplayer
+package dev.markturnip.streamplayer
 
 data class Progress(val elapsed : Double, val duration : Double)
 

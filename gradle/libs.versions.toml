@@ -1,6 +1,6 @@
 [versions]
-agp = "9.2.1"
-kotlin = "2.4.0-RC" # required for `swiftPMDependencies`
+agp = "9.0.1"
+kotlin = "2.4.10"
 kotlinx = "1.11.0"
 mavenPublish = "0.36.0"
 media3Exoplayer = "1.10.1"

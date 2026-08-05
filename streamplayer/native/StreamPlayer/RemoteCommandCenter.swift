@@ -3,15 +3,15 @@ import MediaPlayer
 
 class RemoteCommandCenter {
     
-    private var radioPlayer: RadioPlayerType
+    private var streamPlayer: StreamPlayerType
     @Published
-    private var state: RadioPlayerState = .stopped
+    private var state: StreamPlayerState = .stopped
     
     // MARK: - Init
     
-    init(radioPlayer: RadioPlayerType) {
-        self.radioPlayer = radioPlayer
-        self.radioPlayer.state.assign(to: &$state)
+    init(streamPlayer: StreamPlayerType) {
+        self.streamPlayer = streamPlayer
+        self.streamPlayer.state.assign(to: &$state)
 
         setupRemoteCommandCenter()
     }
@@ -34,39 +34,39 @@ class RemoteCommandCenter {
 
         let remoteCommandCenter = MPRemoteCommandCenter.shared()
         remoteCommandCenter.togglePlayPauseCommand.isEnabled = true
-        remoteCommandCenter.togglePlayPauseCommand.addTarget { [radioPlayer] _ -> MPRemoteCommandHandlerStatus in
-            radioPlayer.togglePlaying()
+        remoteCommandCenter.togglePlayPauseCommand.addTarget { [streamPlayer] _ -> MPRemoteCommandHandlerStatus in
+            streamPlayer.togglePlaying()
             return .success
         }
         remoteCommandCenter.playCommand.isEnabled = true
-        remoteCommandCenter.playCommand.addTarget { [radioPlayer] event -> MPRemoteCommandHandlerStatus in
+        remoteCommandCenter.playCommand.addTarget { [streamPlayer] event -> MPRemoteCommandHandlerStatus in
             if self.state != .playing {
-                radioPlayer.play()
-                return .success // Have play() return a boolean?
+                streamPlayer.play()
+                return .success
             } else {
                 return .noActionableNowPlayingItem
             }
         }
         remoteCommandCenter.pauseCommand.isEnabled = true
-        remoteCommandCenter.pauseCommand.addTarget { [radioPlayer] event -> MPRemoteCommandHandlerStatus in
+        remoteCommandCenter.pauseCommand.addTarget { [streamPlayer] event -> MPRemoteCommandHandlerStatus in
             if self.state == .playing {
-                radioPlayer.pause()
+                streamPlayer.pause()
                 return .success
             } else {
                 return .noActionableNowPlayingItem
             }
         }
         remoteCommandCenter.stopCommand.isEnabled = true
-        remoteCommandCenter.stopCommand.addTarget { [radioPlayer] _ -> MPRemoteCommandHandlerStatus in
-            radioPlayer.stop()
+        remoteCommandCenter.stopCommand.addTarget { [streamPlayer] _ -> MPRemoteCommandHandlerStatus in
+            streamPlayer.stop()
             return .success
         }
         
         remoteCommandCenter.skipForwardCommand.isEnabled = true
         remoteCommandCenter.skipForwardCommand.preferredIntervals = [30]
-        remoteCommandCenter.skipForwardCommand.addTarget { [radioPlayer] (event) -> MPRemoteCommandHandlerStatus in
+        remoteCommandCenter.skipForwardCommand.addTarget { [streamPlayer] (event) -> MPRemoteCommandHandlerStatus in
             if let interval = (event as? MPSkipIntervalCommandEvent)?.interval {
-                radioPlayer.skip(interval)
+                streamPlayer.skip(interval)
                 return .success
             }
             return .commandFailed
@@ -74,18 +74,18 @@ class RemoteCommandCenter {
         
         remoteCommandCenter.skipBackwardCommand.isEnabled = true
         remoteCommandCenter.skipBackwardCommand.preferredIntervals = [30]
-        remoteCommandCenter.skipBackwardCommand.addTarget { [radioPlayer] (event) -> MPRemoteCommandHandlerStatus in
+        remoteCommandCenter.skipBackwardCommand.addTarget { [streamPlayer] (event) -> MPRemoteCommandHandlerStatus in
             if let interval = (event as? MPSkipIntervalCommandEvent)?.interval {
-                radioPlayer.skip(-interval)
+                streamPlayer.skip(-interval)
                 return .success
             }
             return .commandFailed
         }
         
         remoteCommandCenter.changePlaybackPositionCommand.isEnabled = true
-        remoteCommandCenter.changePlaybackPositionCommand.addTarget { [radioPlayer] (event) -> MPRemoteCommandHandlerStatus in
+        remoteCommandCenter.changePlaybackPositionCommand.addTarget { [streamPlayer] (event) -> MPRemoteCommandHandlerStatus in
             if let positionTime = (event as? MPChangePlaybackPositionCommandEvent)?.positionTime {
-                radioPlayer.seek(position: positionTime)
+                streamPlayer.seek(position: positionTime)
                 return .success
             }
             return .commandFailed

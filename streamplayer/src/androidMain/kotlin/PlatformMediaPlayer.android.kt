@@ -1,4 +1,4 @@
-package dev.markturnip.radioplayer
+package dev.markturnip.streamplayer
 
 import android.content.Intent
 import android.net.Uri
@@ -19,7 +19,7 @@ private const val POLL_INTERVAL_MS = 1000L // 1 second
 
 actual final class PlatformMediaPlayer actual constructor() {
     companion object {
-        private lateinit var appContext: android.content.Context
+        internal lateinit var appContext: android.content.Context
         // Exposed so MediaPlayerService can attach a MediaSession to the same player instance.
         var instance: ExoPlayer? = null
             private set
@@ -29,7 +29,7 @@ actual final class PlatformMediaPlayer actual constructor() {
         }
     }
 
-    private val exoPlayer: ExoPlayer = ExoPlayer.Builder(appContext).build().also {
+    internal val exoPlayer: ExoPlayer = ExoPlayer.Builder(appContext).build().also {
         instance = it
     }
 

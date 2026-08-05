@@ -2,9 +2,9 @@ import Combine
 import Foundation
 import AVFoundation
 
-public protocol RadioPlayerType {
-    var state: AnyPublisher<RadioPlayerState, Never> { get }
-    var playbackState: AnyPublisher<RadioPlayerPlaybackState, Never> { get }
+public protocol StreamPlayerType {
+    var state: AnyPublisher<StreamPlayerState, Never> { get }
+    var playbackState: AnyPublisher<StreamPlayerPlaybackState, Never> { get }
     var playProgress: AnyPublisher<Progress, Never> { get }
     var isPlaying: AnyPublisher<Bool, Never> { get }
     var didPlayToEndTime: AnyPublisher<NowPlayingInfo?, Never> { get }

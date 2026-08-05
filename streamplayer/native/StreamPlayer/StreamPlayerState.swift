@@ -1,4 +1,4 @@
-@objc public enum RadioPlayerState: Int {
+@objc public enum StreamPlayerState: Int {
     case stopped
     case playing
     case paused

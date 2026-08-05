@@ -4,18 +4,18 @@
 import PackageDescription
 
 let package = Package(
-    name: "RadioPlayer",
+    name: "StreamPlayer",
     platforms: [.iOS(.v14)],
     products: [
         .library(
-            name: "RadioPlayer",
-            targets: ["RadioPlayer"]
+            name: "StreamPlayer",
+            targets: ["StreamPlayer"]
         )
     ],
     targets: [
         .target(
-            name: "RadioPlayer",
-            path: "./radioplayer/native/RadioPlayer"
+            name: "StreamPlayer",
+            path: "./streamplayer/native/StreamPlayer"
         )
     ]
 )
