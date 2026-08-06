@@ -2,6 +2,8 @@ import AVFoundation
 import UIKit
 
 /// A UIView whose backing layer is an AVPlayerLayer bound to a given AVPlayer.
+/// Uses `.resizeAspect`, so content letterboxes to fit rather than stretching
+/// to fill (contrast Android's `StreamPlayerVideoView`, which stretches to fill).
 /// Create one per PlatformMediaPlayer instance and embed it in your view hierarchy.
 public final class PlayerLayerView: UIView {
     public override class var layerClass: AnyClass { AVPlayerLayer.self }
