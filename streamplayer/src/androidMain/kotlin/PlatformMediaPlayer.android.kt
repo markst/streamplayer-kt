@@ -2,6 +2,7 @@ package dev.markturnip.streamplayer
 
 import android.content.Intent
 import android.net.Uri
+import android.os.Build
 import android.os.Handler
 import android.os.Looper
 
@@ -17,7 +18,7 @@ import kotlinx.coroutines.flow.filterNotNull
 
 private const val POLL_INTERVAL_MS = 1000L // 1 second
 
-actual final class PlatformMediaPlayer actual constructor() {
+actual class PlatformMediaPlayer actual constructor() {
     companion object {
         internal lateinit var appContext: android.content.Context
         // Exposed so MediaPlayerService can attach a MediaSession to the same player instance.
@@ -105,7 +106,9 @@ actual final class PlatformMediaPlayer actual constructor() {
         exoPlayer.setMediaItem(mediaItem)
         exoPlayer.prepare()
         play()
-        appContext.startForegroundService(Intent(appContext, MediaPlayerService::class.java))
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            appContext.startForegroundService(Intent(appContext, MediaPlayerService::class.java))
+        }
     }
 
     // Use play()/pause() rather than playWhenReady so ExoPlayer applies the
